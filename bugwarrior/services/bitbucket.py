@@ -94,13 +94,17 @@ class BitbucketService(IssueService):
         log.name(self.target).debug(" Pruned down to {0}", len(issues))
 
         return [dict(
-            description=self.description(
+            long_description=self.description(
                 issue['title'], issue['url'],
                 issue['local_id'], cls="issue"),
+            description=issue['title'],
             project=tag.split('/')[1],
             priority=self.priorities.get(
                 issue['priority'],
                 self.default_priority,
+            ),
+            key=self.build_unique_id(
+                issue['url'],
             ),
             **self.annotations(tag, issue)
         ) for tag, issue in issues]

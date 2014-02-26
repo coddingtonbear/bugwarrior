@@ -218,13 +218,15 @@ class ActiveCollab2Service(IssueService):
 
         for issue in issues:
             formatted_issue = dict(
-                description=self.description(
+                long_description=self.description(
                     issue["description"],
                     issue["project_id"],
                     issue["ticket_id"],
                     issue["type"]),
+                description=issue["description"],
                 project=self.get_project_name(issue),
                 priority=issue["priority"],
+                key=self.build_unique_id(issue["permalink"]),
                 **self.annotations(issue)
             )
             if "due" in issue:

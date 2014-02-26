@@ -112,22 +112,26 @@ class GithubService(IssueService):
         requests = sum([self._reqs(user + "/" + r['name']) for r in repos], [])
 
         formatted_issues = [dict(
-            description=self.description(
+            long_description=self.description(
                 issue['title'], issue['html_url'],
                 issue['number'], cls="issue"
             ),
+            description=issue['title'],
             project=tag.split('/')[1],
             priority=self.default_priority,
+            key=self.build_unique_id(issue['html_url']),
             **self.annotations(tag, issue)
         ) for tag, issue in issues]
 
         formatted_requests = [{
-            "description": self.description(
+            "long_description": self.description(
                 request['title'], request['html_url'],
                 request['number'], cls="pull_request"
             ),
+            "description": request["title"],
             "project": tag.split('/')[1],
             "priority": self.default_priority,
+            "key": self.build_unique_id(request['html_url']),
         } for tag, request in requests]
 
         return formatted_issues + formatted_requests

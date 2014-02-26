@@ -1,11 +1,12 @@
-from twiggy import log
-
-import bitlyapi
+import hashlib
 import time
 import os
-import dogpile.cache
 
-from bugwarrior.config import die, asbool
+import bitlyapi
+import dogpile.cache
+from twiggy import log
+
+from bugwarrior.config import asbool
 from bugwarrior.db import MARKUP
 
 
@@ -124,6 +125,11 @@ class IssueService(object):
         """ Override this for filtering on tickets """
         raise NotImplementedError
 
+    def build_unique_id(self, *key_components):
+        return '/'.join([
+            [self.__class__.__name__] + list(key_components)
+        ])
+
 
 from github import GithubService
 from bitbucket import BitbucketService
@@ -172,6 +178,13 @@ def _aggregate_issues(args):
     conf, target = args
 
     start = time.time()
+
+    uda_name = 'bugwarrior_unique_key'
+    if (
+        conf.has_option('general', 'unique_key_uda')
+        and conf.get('general', 'unique_key_uda').strip()
+    ):
+        uda_name = conf.get('general', 'unique_key_uda')
 
     try:
         # By default, we don't shorten URLs

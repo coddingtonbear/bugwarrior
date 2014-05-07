@@ -13,6 +13,7 @@ class JiraIssue(Issue):
     URL = 'jiraurl'
     FOREIGN_ID = 'jiraid'
     DESCRIPTION = 'jiradescription'
+    PROJECT = 'jiraproject'
 
     UDAS = {
         SUMMARY: {
@@ -30,6 +31,10 @@ class JiraIssue(Issue):
         FOREIGN_ID: {
             'type': 'string',
             'label': 'Jira Issue ID'
+        },
+        PROJECT: {
+            'type': 'string',
+            'label': 'Jira Project',
         }
     }
     UNIQUE_KEY = (URL, )
@@ -53,6 +58,7 @@ class JiraIssue(Issue):
             self.FOREIGN_ID: self.record['key'],
             self.DESCRIPTION: self.record.get('fields', {}).get('description'),
             self.SUMMARY: self.get_summary(),
+            self.PROJECT: self.get_project(),
         }
 
     def get_tags(self):

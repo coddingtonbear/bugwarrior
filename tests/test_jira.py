@@ -49,6 +49,7 @@ class TestJiraIssue(ServiceTest):
             issue.FOREIGN_ID: arbitrary_record['key'],
             issue.SUMMARY: arbitrary_summary,
             issue.DESCRIPTION: None,
+            issue.PROJECT: arbitrary_project
         }
 
         def get_url(*args):

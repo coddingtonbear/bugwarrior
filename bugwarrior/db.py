@@ -1,10 +1,8 @@
 from ConfigParser import NoOptionError
-import os
 import re
 import subprocess
 
 import requests
-import dogpile.cache
 import six
 from twiggy import log
 from taskw import TaskWarriorShellout
@@ -15,15 +13,6 @@ from bugwarrior.notifications import send_notification
 
 
 MARKUP = "(bw)"
-
-
-DOGPILE_CACHE_PATH = os.path.expanduser('~/.cache/dagd.dbm')
-if not os.path.isdir(os.path.dirname(DOGPILE_CACHE_PATH)):
-    os.makedirs(os.path.dirname(DOGPILE_CACHE_PATH))
-CACHE_REGION = dogpile.cache.make_region().configure(
-    "dogpile.cache.dbm",
-    arguments=dict(filename=DOGPILE_CACHE_PATH),
-)
 
 
 # Sentinel value used for aborting processing of tasks
@@ -40,7 +29,6 @@ class URLShortener(object):
             )
         return cls._instance
 
-    @CACHE_REGION.cache_on_arguments()
     def shorten(self, url):
         if not url:
             return ''
